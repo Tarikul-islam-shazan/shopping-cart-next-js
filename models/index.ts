@@ -4,7 +4,8 @@ export interface IProduct{
     price:string,
     category:string,
     description:string,
-    image: string
+    image: string,
+    cartCount: number
 }
 
 export interface ICategory{
