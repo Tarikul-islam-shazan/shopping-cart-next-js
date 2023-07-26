@@ -8,7 +8,7 @@ const productApi = createApi({
     }),
     endpoints: (builder) => ({
         fetchProducts: builder.query<IProduct[], string>({
-            query: (name) => `/products/category/${name}`
+            query: (name) => `/products/category/${name}?sort=asc`
         }),
     }),
 });

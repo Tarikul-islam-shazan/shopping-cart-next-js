@@ -1,13 +1,31 @@
 import { useFetchProductDetailsByIdQuery } from '@/store/apis/productDetailsApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { addToCartProduct, decrement, increment, incrementByValue } from '@/store/slices/cart/cartSlice';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react'
 
 const ProductDetails = () => {
+    const dispatch = useAppDispatch();
     const router = useRouter();
+    const {total, addedProduct} = useAppSelector((state) => state.cart);
     // console.log(router.pathname);
     // console.log(router.query.productId);
     const { data, error, isLoading } = useFetchProductDetailsByIdQuery(String(router.query.productId));
-    // console.log(data?.image);
+    const exist = addedProduct.filter(p => data?.id == p.id)
+    
+    const updateByValue = (e: React.FormEvent<HTMLInputElement>) => {
+        //if(e.currentTarget.value!= ''){
+            //console.log('e.currentTarget.value',e.currentTarget.value)
+            const value = e.currentTarget.value === '' ? 0: parseInt(e.currentTarget.value);
+            //console.log(value);
+            dispatch(incrementByValue({
+                product: exist[0],
+                value
+            }))
+        //}
+    }
+
     let content;
     if(isLoading){
         content =  <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">Loading ..</div>
@@ -146,31 +164,44 @@ const ProductDetails = () => {
                                     </button>
                                 </div>
                             </div> */}
-                            <div className="flex flex-wrap items-center ">
-                                <div className="mb-4 mr-4 lg:mb-0">
+                             <div className="flex flex-wrap items-center ">
+                             { exist.length > 0 &&<div className="mb-4 mr-4 lg:mb-0">
                                     <div className="w-28">
                                         <div className="relative flex flex-row w-full h-10 bg-transparent rounded-lg">
                                             <button
+                                                onClick={()=> dispatch(decrement(exist[0]))}
                                                 className="w-20 h-full text-gray-600 bg-gray-100 border-r rounded-l outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-300">
                                                 <span className="m-auto text-2xl font-thin">-</span>
                                             </button>
+                                            
                                             <input type="number"
                                                 className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-100 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
-                                                placeholder="1"/>
+                                                value={exist[0].cartCount == 0 ? '': exist[0].cartCount}
+                                                onChange={(e)=> updateByValue(e)}
+                                                />
                                             <button
+                                                onClick={()=> dispatch(increment(exist[0]))}
                                                 className="w-20 h-full text-gray-600 bg-gray-100 border-l rounded-r outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-300">
                                                 <span className="m-auto text-2xl font-thin">+</span>
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div>}
                                 {/* <div className="mb-4 mr-4 lg:mb-0">
                                     <button
                                         className="w-full h-10 p-2 mr-4 bg-blue-500 dark:text-gray-200 text-gray-50 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500">
                                         Buy Now</button>
                                 </div> */}
-                                <div className="mb-4 mr-4 lg:mb-0">
-                                    <button
+                                {exist.length ===0 && <div className="mb-4 mr-4 lg:mb-0">
+                                    <button onClick={()=> dispatch(addToCartProduct({
+                                         id: data?.id || 0,
+                                         title: data?.title || 'N/A',
+                                         price:data?.price || 'N/A',
+                                         category:data?.category || 'N/A',
+                                         description:data?.description || 'N/A',
+                                         image: data?.image || 'N/A',
+                                         cartCount: 0
+                                    }))}
                                         className="flex items-center justify-center w-full h-10 p-2 text-gray-700 border border-gray-300 lg:w-11 hover:text-gray-50 dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 dark:hover:border-blue-500 dark:hover:text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                             className="bi bi-cart" viewBox="0 0 16 16">
@@ -178,7 +209,7 @@ const ProductDetails = () => {
                                                 d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                                         </svg>
                                     </button>
-                                </div>
+                                </div>}
                                 {/* <div className="mb-4 lg:mb-0">
                                     <button
                                         className="flex items-center justify-center w-full h-10 p-2 text-gray-700 border border-gray-300 lg:w-11 hover:text-gray-50 dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 dark:hover:border-blue-500 dark:hover:text-gray-300">
@@ -200,6 +231,16 @@ const ProductDetails = () => {
 
   return (
     <section className="py-20 overflow-hidden bg-white font-poppins ">
+        <li className="font-sans block mt-4 lg:inline-block lg:mt-0 lg:ml-6 align-middle text-black hover:text-gray-700 float-right">
+        <Link href="/cart" role="button" className="relative flex">
+                <svg className="flex-1 w-8 h-8 fill-current" viewBox="0 0 24 24">
+                  <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18Z"/>
+                  </svg>
+                  <span className="absolute right-0 top-0 rounded-full bg-red-600 w-4 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+                    {total}
+                </span>
+              </Link>
+              </li>
         {content}
     </section>
   )
