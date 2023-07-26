@@ -47,7 +47,7 @@ const ShoppingCart = () => {
                             </svg>
                         </div>
                         <span className="text-center w-1/5 font-semibold text-sm">${product.price}</span>
-                        <span className="text-center w-1/5 font-semibold text-sm">${ parseInt(product.price) * product.cartCount}</span>
+                        <span className="text-center w-1/5 font-semibold text-sm">${ (parseFloat(product.price) * product.cartCount).toFixed(2)}</span>
                     </div>
                 )
             })
@@ -88,13 +88,13 @@ const ShoppingCart = () => {
             <h1 className="font-semibold text-2xl border-b pb-8">Order Summary</h1>
             <div className="flex justify-between mt-10 mb-5">
             <span className="font-semibold text-sm uppercase">Items {total}</span>
-            <span className="font-semibold text-sm">${totalPrice}</span>
+            <span className="font-semibold text-sm">${totalPrice.toFixed(2)}</span>
             </div>
        
             <div className="border-t mt-8">
             <div className="flex font-semibold justify-between py-6 text-sm uppercase">
                 <span>Total cost</span>
-                <span>${totalPrice}</span>
+                <span>${totalPrice.toFixed(2)}</span>
             </div>
             <button className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">Checkout</button>
             </div>
