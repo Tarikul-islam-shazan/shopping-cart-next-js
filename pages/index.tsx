@@ -1,13 +1,9 @@
 import ProductCatalog from "@/components/ProductCatalog";
 
-
-
 const  Home = () =>{
- 
-
 
   return (
-    <section className="py-20">
+    <section>
 
     <ProductCatalog/> 
     </section>
