@@ -9,17 +9,16 @@ import React from 'react';
 
 const CategoryWiseProduct = ({ category }: ICategory) => {
   const dispatch = useAppDispatch();
-    const { data, error, isLoading } = useFetchProductsQuery(category);
-    const {total, addedProduct} = useAppSelector((state) => state.cart);
+  const {total, addedProduct} = useAppSelector((state) => state.cart);
+  const {sortOrder} = useAppSelector((state) => state.product);
+  const { data, error, isLoading } = useFetchProductsQuery({name: category, order: sortOrder});
 
-    const router =  useRouter();
+  const router =  useRouter();
   
-    const goToProductDetailsPage = (Id: number) => {
-      router.push(`/product/${Id}`)
-    }
-    const call = ()=> {
-      console.log('call');
-    }
+  const goToProductDetailsPage = (Id: number) => {
+    router.push(`/product/${Id}`)
+  }
+
     
     let content;
     if(isLoading ){

@@ -3,26 +3,32 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 
 export interface ProductState{
-   data: IProduct[]
+    filterCategory: string[],
+    sortOrder: string;
 }
 
 const initialState: ProductState = {
-    data: []
+    filterCategory: [],
+    sortOrder: 'asc'
 };
 
 export const productSlice = createSlice({
     name: 'product',
     initialState,
     reducers: {
-        addAllProduct: (state, action: PayloadAction<IProduct[]>) => {
-             state.data = action.payload;
+
+        filteredCategory: (state, action: PayloadAction<string>) => {
+            state.filterCategory.push(action.payload);
         },
-        getAllProduct: (state) => {
-            return state
+        removeFilteredCategory: (state, action: PayloadAction<string>) => {
+            state.filterCategory = state.filterCategory.filter(c => c !== action.payload);
         },
+        changeSortOrder: (state) => {
+            state.sortOrder = state.sortOrder === 'asc' ? 'desc': 'asc';
+        }
     }
 });
 
-export const { getAllProduct,addAllProduct } = productSlice.actions;
+export const { filteredCategory,removeFilteredCategory,changeSortOrder } = productSlice.actions;
 
 export const productReducer = productSlice.reducer;

@@ -9,5 +9,5 @@ export interface IProduct{
 }
 
 export interface ICategory{
-    category: string
+    category: string;
 }
